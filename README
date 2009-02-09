@@ -1,3 +1,7 @@
 = Page Options
 
-Description goes here
+Enables per page options, such as turning off caching for a single page
+== Revision History
+
+1.0 - 2/2009 - initial release, Radiant 0.6.9 compatible
+
