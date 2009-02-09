@@ -1,21 +1,22 @@
 # Uncomment this if you reference any of your controllers in activate
-# require_dependency 'application'
+require_dependency 'application'
 
 class PageOptionsExtension < Radiant::Extension
   version "1.0"
-  description "Describe your extension here"
-  url "http://yourwebsite.com/page_options"
+  description "Enables per page options, such as turning off caching for a single page"
+  url "http://github.com/avonderluft/radiant-page_options-extension/tree/master"
   
   # define_routes do |map|
   #   map.connect 'admin/page_options/:action', :controller => 'admin/page_options'
   # end
   
   def activate
-    # admin.tabs.add "Page Options", "/admin/page_options", :after => "Layouts", :visibility => [:all]
+    Page.send :include, PageOptions::PageExtensions
+    admin.page.edit.add :extended_metadata, 'nocache_meta', :visibility => [:admin]
   end
   
   def deactivate
-    # admin.tabs.remove "Page Options"
+    # not needed
   end
   
 end
