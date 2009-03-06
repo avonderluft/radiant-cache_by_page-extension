@@ -41,7 +41,7 @@
         &mdash; or &mdash;
       %strong 
         Expire daily at:
-      = datetime_select :page, :cache_expire_time, {:discard_year => true, :discard_month =>true, :discard_day => true, :minute_step => 10, :include_blank => true}
+      = datetime_select :page, :cache_expire_time, {:minute_step => 10, :include_blank => true}
       
 - content_for :page_css do
   :sass
