@@ -1,51 +1,75 @@
-- @default_cache_expire_time = ResponseCache.defaults[:expire_time]
-%tr
-  %th.label
-    Caching
-    %label
-      %em 
-        (Default: 
-        - seconds = @default_cache_expire_time
-        - if seconds >= 86400
-          - days = seconds/86400
-          - if days > 1 
-            = "#{days} days)"
-          - else
-            = "1 day)"
-        - elsif seconds >= 3600
-          - hours = seconds/3600
-          - if hours > 1 
-            = "#{hours} days)"
-          - else
-            = "1 hour)"
-        - elsif seconds >= 120 then
-          = "#{seconds/60} minutes)"
-        - else 
-          = "#{seconds} seconds)"
-  %td.field{:style => "text-align: left"}
-    %label
-      %strong
-        &nbsp; Override:
-      cache page for
-      = text_field 'page', 'cache_expire_minutes', :maxlength => 3
-      minutes. 
-      %span#desc 
-        ( 0 = 
+- if current_user.admin?
+  %tr
+    %th.label{:style => "vertical-align:middle"}
+      Page Caching
+      %br
+      %span#desc
         %font{:color => 'green'}
-          default
-        , -1 = 
-        %font{:color => 'red'}
-          no caching
-        ) 
-      %em
-        &mdash; or &mdash;
-      %strong 
-        Expire daily at:
-      = datetime_select :page, :cache_expire_time, {:minute_step => 10, :include_blank => true}
-      
-- content_for :page_css do
-  :sass
-    #desc
-      font-size: 12px
-      font-weight: bold
-      
+          ( Default:
+          - seconds = ResponseCache.defaults[:expire_time]
+          - if seconds >= 86400
+            - days = seconds/86400
+            - if days > 1
+              = "#{days} days"
+            - else
+              = "1 day"
+          - elsif seconds >= 3600
+            - hours = seconds/3600
+            - if hours > 1
+              = "#{hours} days"
+            - else
+              = "1 hour"
+          - elsif seconds >= 120 then
+            = "#{seconds/60} minutes"
+          - else
+            = "#{seconds} seconds"
+          )
+    %td.field{:style => "text-align: left"}
+      %table{:style => "vertical-align:top;"}
+        %row
+          %td{:style => "text-align: left"}
+            %label
+            %strong
+              Current Setting:
+            %br
+            = @page.cache_setting
+          %td
+            &nbsp;&nbsp;&nbsp;
+          %td{:style => "text-align: left"}
+            %label
+            %strong
+              Override:
+            Cache page for
+            = text_field :page, :cache_expire_minutes, {:maxlength => 4}
+            minutes
+            %br
+            %span#desc
+              ( 0 =
+              %font{:color => 'green'}
+                Default Caching
+              , -1 =
+              %font{:color => 'red'}
+                No Caching.
+              )
+            %td{:style => "text-align: left"}
+              %strong
+                %em
+                  &mdash; or &mdash;
+            %td{:style => "text-align: right"}
+              %label
+                Expire cache each day at
+                = text_field :page, :cache_expire_time, {:maxlength => 5}
+                (HH:MM)
+                %br
+                %span#desc
+                  (
+                  %font{:color => 'brown'}
+                    Clear expire time field to reset default caching
+                  )
+
+  - content_for :page_css do
+    :sass
+      #desc
+        font-size: 12px
+        font-weight: bold
+

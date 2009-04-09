@@ -12,9 +12,9 @@ class PageOptionsExtension < Radiant::Extension
   
   def activate
     Page.send :include, PageOptions::PageExtensions
-    admin.page.edit.add :extended_metadata, 'caching_meta', :visibility => [:admin]
+    admin.page.edit.add :extended_metadata, 'caching_meta'
   end
-  
+
   def deactivate
     # not needed
   end

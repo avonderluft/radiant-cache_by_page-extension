@@ -1,0 +1,42 @@
+h2. _Page Options_
+
+Extension for Radiant CMS which enables per page admin options, such as setting caching to a non-default value, or turning it off altogether
+
+* Created by:  Andrew vonderLuft
+* Contact: avonderluft [at] avlux [dot] net
+
+h3. Revision History
+
+* 1.0 - 4/2009 - Radiant 0.7 compatible, per page caching options
+
+h3. Requirements
+
+* Radiant 0.7 or greater
+* no other known dependencies
+
+h3. Installation
+
+From your RADIANT_ROOT:
+
+* <pre>$ script/extension install page_options</pre>
+* Restart your radiant app, and you should be good to go.
+
+h3. To Do
+
+* Other per page options -- suggestions most welcome
+
+h3. Notes
+
+h4. Page Caching
+
+* Available to admin users only.  You can change this by removing "if current_user.admin?" from the top of the caching_meta template.
+* The cache_expire_time is being set with a text field with no validation for a few reasons:
+# The time_select in rails has issues when the :include_blank => true option is set, viz. it consistently throws multi-parameter assignment errors.
+# At validation time the text entered has already been parsed into a Time object, therefore attempting validates_format_of with a regex for hh:mm is pointless.
+# Consequently, if you enter "www" it will parse the input into Time 00:00 (midnight).  To avoid possible confusion, I hare added Current Setting in the meta partial.
+
+* Expire time displays as hh:mm:ss, due to fact that it is a Time object being handled by ActiveRecord, but it is entered as hh:mm, with seconds defaulting to 00.
+
+h3. Acknowledgments
+
+As always, Sean Cribbs lent assistance with the finer points of Ruby, Rails and Radiant.  The _Jupiter_ of Holst is still exquisite, even if it is a little bit of overkill for a podcast.
