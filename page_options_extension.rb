@@ -1,5 +1,5 @@
 # Uncomment this if you reference any of your controllers in activate
-require_dependency 'application'
+# require_dependency 'application'
 
 class PageOptionsExtension < Radiant::Extension
   version "1.0"
