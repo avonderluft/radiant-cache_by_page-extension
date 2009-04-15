@@ -12,13 +12,8 @@ class PageOptionsExtension < Radiant::Extension
   
   def activate
     Page.send :include, PageOptions::PageExtensions
-    if defined?(TemplatesExtension)
-      admin.page.index.add :sitemap_head, 'caching_th', :after => 'type_column_header'
-      admin.page.index.add :node, 'caching_td', :after => 'type_column'
-    else
-      admin.page.index.add :sitemap_head, 'caching_th', :after => 'title_column_header'
-      admin.page.index.add :node, 'caching_td', :after => 'title_column'
-    end
+    admin.page.index.add :sitemap_head, 'caching_th', :before => 'status_column_header'
+    admin.page.index.add :node, 'caching_td', :before => 'status_column'
     admin.page.edit.add :extended_metadata, 'caching_meta'
   end
 
