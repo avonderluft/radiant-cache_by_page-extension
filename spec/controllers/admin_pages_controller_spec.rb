@@ -11,13 +11,22 @@ describe Admin::PagesController, 'with page options' do
   end
 
   [:admin, :developer].each do |user|
-     it "should display the admin edit page successfully for #{user}" do
+     it "should display the admin edit page successfully for #{user} on an existing page" do
        login_as user
        get :edit, :id => @page
-       response.should be_success
        response.should render_template('edit')
-       logout
      end
+
+     it "should display admin edit page successfully for #{user} on a new page" do
+       login_as user
+       get :new
+       response.should render_template('new')
+     end
+  end
+
+  after :each do
+    response.should be_success
+    logout
   end
 
 end

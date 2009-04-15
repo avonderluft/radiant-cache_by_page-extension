@@ -32,7 +32,8 @@
             %strong
               Current Setting:
             %br
-            = @page.cache_setting
+            = @page.cache_setting if Page.exists? @page
+            &nbsp;
           %td
             &nbsp;&nbsp;&nbsp;
           %td{:style => "text-align: left"}
