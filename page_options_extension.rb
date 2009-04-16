@@ -12,6 +12,7 @@ class PageOptionsExtension < Radiant::Extension
   
   def activate
     Page.send :include, PageOptions::PageExtensions
+    admin.page.index.add :top, "caching_header"
     admin.page.index.add :sitemap_head, 'caching_th', :before => 'status_column_header'
     admin.page.index.add :node, 'caching_td', :before => 'status_column'
     admin.page.edit.add :extended_metadata, 'caching_meta'
@@ -20,5 +21,5 @@ class PageOptionsExtension < Radiant::Extension
   def deactivate
     # not needed
   end
-  
+
 end

@@ -6,23 +6,7 @@
       %span#desc
         %font{:color => 'green'}
           ( Default:
-          - seconds = ResponseCache.defaults[:expire_time]
-          - if seconds >= 86400
-            - days = seconds/86400
-            - if days > 1
-              = "#{days} days"
-            - else
-              = "1 day"
-          - elsif seconds >= 3600
-            - hours = seconds/3600
-            - if hours > 1
-              = "#{hours} days"
-            - else
-              = "1 hour"
-          - elsif seconds >= 120 then
-            = "#{seconds/60} minutes"
-          - else
-            = "#{seconds} seconds"
+          = Page.default_caching
           )
     %td.field{:style => "text-align: left"}
       %table{:style => "vertical-align:top;"}
@@ -67,10 +51,8 @@
                   %font{:color => 'brown'}
                     Clear expire time field to reset default caching
                   )
-
   - content_for :page_css do
     :sass
       #desc
         font-size: 12px
         font-weight: bold
-

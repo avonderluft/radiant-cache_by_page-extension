@@ -1,6 +1,7 @@
 module PageOptions::PageExtensions
   def self.included(base)
     base.class_eval do
+      extend ClassMethods
       validates_numericality_of :cache_expire_minutes, :allow_nil => false, :only_integer => true,
                                 :message => 'must be a whole number'
       def validate
@@ -13,6 +14,7 @@ module PageOptions::PageExtensions
         end
         super
       end
+
       def cache?
         self.cache_expire_minutes.to_i >= 0
       end
@@ -46,4 +48,23 @@ module PageOptions::PageExtensions
     end
     process_without_expire_time(request, response)
   end
+
+  module ClassMethods
+    def default_caching
+      seconds = ResponseCache.defaults[:expire_time]
+      cache_expire_time = case true
+        when seconds >= 86400
+          "#{seconds/86400} days"
+        when seconds >= 3600
+          "#{seconds/3600} hours"
+        when seconds >= 120
+          "#{seconds/60} minutes"
+        else
+          "#{seconds} seconds"
+      end
+      cache_expire_time = cache_expire_time.chop if cache_expire_time[0,1] == "1"
+      cache_expire_time
+    end
+  end
+
 end
