@@ -2,57 +2,29 @@
   %tr
     %th.label{:style => "vertical-align:middle"}
       Page Caching
-      %br
-      %span#desc
-        %font{:color => 'green'}
-          ( Default:
-          = Page.default_caching
-          )
     %td.field{:style => "text-align: left"}
       %table{:style => "vertical-align:top;"}
         %row
           %td{:style => "text-align: left"}
-            %label
-            %strong
-              Current Setting:
+            %label Current Setting:
             %br
             = @page.cache_setting if Page.exists? @page
-            &nbsp;
-          %td
-            &nbsp;&nbsp;&nbsp;
           %td{:style => "text-align: left"}
-            %label
-            %strong
-              Override:
-            Cache page for
+            %label Override: Cache this page for
             = text_field :page, :cache_expire_minutes, {:maxlength => 4}
-            minutes
+            - mins = @page.cache_expire_minutes != 1 ? "minutes" : "minute"
+            = mins
             %br
-            %span#desc
-              ( 0 =
-              %font{:color => 'green'}
-                Default Caching
-              , -1 =
-              %font{:color => 'red'}
-                No Caching.
-              )
-            %td{:style => "text-align: left"}
-              %strong
-                %em
-                  &mdash; or &mdash;
+            %span.desc= "( '0' = Default of #{Page.default_caching},  '-1' = No Caching )"
+            %td{:style => "text-align: left"} &mdash; or &mdash;
             %td{:style => "text-align: right"}
               %label
                 Expire cache each day at
                 = text_field :page, :cache_expire_time, {:maxlength => 5}
                 (HH:MM)
                 %br
-                %span#desc
-                  (
-                  %font{:color => 'brown'}
-                    Clear expire time field to reset default caching
-                  )
+                %span.desc= "(Clear expire time to reset default of #{Page.default_caching})"
   - content_for :page_css do
     :sass
-      #desc
-        font-size: 12px
-        font-weight: bold
+      .desc
+        font-size: 80%

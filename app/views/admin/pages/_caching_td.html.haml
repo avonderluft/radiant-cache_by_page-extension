@@ -1,1 +1,4 @@
-%td.caching= page.cache_setting
+- if page.cache_setting == "Default"
+  %td.status{:title=>Page.default_caching}= page.cache_setting
+- else
+  %td.status= page.cache_setting

@@ -51,11 +51,7 @@ module PageOptions::PageExtensions
 
   module ClassMethods
     def default_caching
-      seconds = if defined? ResponseCache == 'constant'
-        ResponseCache.defaults[:expire_time] 
-      else 
-        SiteController.cache_timeout 
-      end
+      seconds = SiteController.respond_to?('cache_timeout') ? SiteController.cache_timeout : ResponseCache.defaults[:expire_time] 
       cache_expire_time = case true
         when seconds >= 86400
           "#{seconds/86400} days"
