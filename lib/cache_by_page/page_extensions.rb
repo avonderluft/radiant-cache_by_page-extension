@@ -1,4 +1,4 @@
-module PageOptions::PageExtensions
+module CacheByPage::PageExtensions
   def self.included(base)
     base.class_eval do
       extend ClassMethods

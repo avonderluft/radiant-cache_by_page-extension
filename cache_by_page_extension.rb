@@ -7,7 +7,7 @@ class CacheByPageExtension < Radiant::Extension
   url "https://github.com/avonderluft/radiant-cache_by_page-extension"
 
   def activate
-    Page.send :include, PageOptions::PageExtensions
+    Page.send :include, CacheByPage::PageExtensions
     admin.page.index.add :sitemap_head, 'caching_th', :before => 'status_column_header'
     admin.page.index.add :node, 'caching_td', :before => 'status_column'
     admin.page.edit.add :extended_metadata, 'caching_meta'
