@@ -1,6 +1,6 @@
-h2. _Page Options_
+h2. _Cache by Page_
 
-Extension for Radiant CMS which enables per page admin options, such as setting caching to a non-default value, or turning it off altogether
+Extension for Radiant CMS which enables per page admin option of setting caching to a non-default value, or turning it off altogether
 
 * Created by:  Andrew vonderLuft
 * Contact: avonderluft [at] avlux [dot] net
@@ -18,16 +18,10 @@ h3. Installation
 
 From your RADIANT_ROOT:
 
-* <pre>$ script/extension install page_options</pre>
+* <pre>$ script/extension install cache_by_page</pre>
 * Restart your radiant app, and you should be good to go.
 
-h3. To Do
-
-* Other per page options -- suggestions most welcome
-
-h3. Notes
-
-h4. Page Caching
+h3. Page Caching
 
 * Available to admin users only.  You can change this by removing "if current_user.admin?" from the top of the caching_meta template.
 * The cache_expire_time is being set with a text field with no validation for a few reasons:

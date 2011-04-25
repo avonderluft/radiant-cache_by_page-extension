@@ -1,10 +1,10 @@
 # Uncomment this if you reference any of your controllers in activate
 # require_dependency 'application_controller'
 
-class PageOptionsExtension < Radiant::Extension
+class CacheByPageExtension < Radiant::Extension
   version "1.0"
-  description "Enables per page options, such as setting cache expire time, or turning off caching for a single page"
-  url "https://github.com/avonderluft/radiant-page_options-extension"
+  description "Enables per page option of setting cache expire time, or turning off caching for a single page"
+  url "https://github.com/avonderluft/radiant-cache_by_page-extension"
 
   def activate
     Page.send :include, PageOptions::PageExtensions
