@@ -2,26 +2,35 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 Admin::PagesController.module_eval { def rescue_action(e); raise e; end }
 
-describe Admin::PagesController, 'with page options' do
+describe Admin::PagesController, 'with cache_by_page' do
   dataset :users_and_pages
+  integrate_views
 
   before :each do
-    controller.cache.clear
     @page = pages(:home)
   end
 
-  [:admin, :developer].each do |user|
-     it "should display the admin edit page successfully for #{user} on an existing page" do
-       login_as user
-       get :edit, :id => @page
-       response.should render_template('edit')
-     end
-
-     it "should display admin edit page successfully for #{user} on a new page" do
-       login_as user
-       get :new
-       response.should render_template('new')
-     end
+  [:admin, :non_admin, :designer].each do |user|
+    describe "privileges for user '#{user}'" do
+      before(:each) do
+        login_as user
+      end
+      it "should display admin edit page on a new page" do
+        get :new
+        response.should render_template('new')
+      end
+      if user == :admin
+        it "should display page caching options on the admin edit page for an existing page" do
+          get :edit, :id => @page
+          response.should include_text("Cache this page for")
+        end
+      else
+        it "should not display page caching options on the admin edit page for an existing page" do
+          get :edit, :id => @page
+          response.should_not include_text("Cache this page for")
+        end
+      end
+    end
   end
 
   after :each do

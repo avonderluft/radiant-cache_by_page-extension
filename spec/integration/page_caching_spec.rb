@@ -2,148 +2,111 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Page, "with page-specific caching", :type => :integration do
   dataset :pages
+  USING_RACK_CACHE = SiteController.respond_to?('cache_timeout')
 
   before :all do
     @cache_dir = "#{RAILS_ROOT}/tmp/cache"
-    @cache_file = "#{@cache_dir}/_site-root.yml"
+    @cache_file = USING_RACK_CACHE ? "#{@cache_dir}/meta/*/*" : "#{@cache_dir}/_site-root.yml"
   end
 
   before :each do
     @page = pages(:home)
-    ResponseCache.defaults[:directory] = @cache_dir
-    ResponseCache.defaults[:perform_caching] = true
-    ResponseCache.defaults[:expire_time] = 1.day
-    @cache = ResponseCache.instance
-    @cache.clear if @cache.defaults[:directory] == @cache_dir # prevents rm -rf / !
+    @default = 1.day
+    if USING_RACK_CACHE
+      SiteController.page_cache_directory = @cache_dir
+      SiteController.perform_caching = true
+      SiteController.cache_timeout = @default
+    else
+      ResponseCache.defaults[:directory] = @cache_dir
+      ResponseCache.defaults[:perform_caching] = true
+      ResponseCache.defaults[:expire_time] = @default
+    end
+    @expire_mins = @default.to_i/60
+    @cache = USING_RACK_CACHE ? Radiant::Cache : ResponseCache.instance
+    @cache.clear
   end
 
-  it "should be valid" do
-    @page.should be_valid
+  def page_is_cached(page)
+    if response.nil?
+      @cache.clear
+      false
+    elsif USING_RACK_CACHE
+      ! response.headers['Cache-Control'].include?('no-cache')
+    else
+      @cache.response_cached?(page.url)
+    end
   end
-  it "should have alias method chain set up" do
-    @page.should respond_to(:process_without_expire_time)
-    @page.should respond_to(:process_with_expire_time)
-    @page.should respond_to(:process)
+
+  def cache_expires
+    if USING_RACK_CACHE
+      Time.now + `cat #{@cache_file}`.split('max-age=')[1].split(',')[0].to_i rescue nil
+    else
+      YAML.load_file(@cache_file)['expires'] rescue nil
+    end
   end
 
   describe "- intial fetch of page before updates" do
-    it "should have valid cache_expire_minutes" do
-      @page.cache_expire_minutes.should be_instance_of(Fixnum)
-      @page.should have(:no).errors_on(:cache_expire_minutes)
-    end
-    it do
-      @page.should have(:no).errors_on(:cache_expire_time)
-    end
-    it 'should cache by by default' do
-      @page.cache?.should == true
-    end
     it "should render a page with default caching" do
-      navigate_to "#{@page.slug}"
+      get "#{@page.slug}"
       response.should be_success
       response.cache_timeout.should be_nil
-      @cache.response_cached?(@page.url).should be_true
-    end
-  end
-
-  describe "- after updates and validation with save" do
-    it "should return error if non-numeric is entered for cache_expire_minutes" do
-      @page.cache_expire_minutes = "five"
-      @page.save.should raise_error
-    end
-    it "should return error if non-integer is entered for cache_expire_minutes" do
-      @page.cache_expire_minutes = "3.3"
-      @page.save.should raise_error
-    end
-    it "should set cache_expire_minutes to 0 when cache_expire_time is updated" do
-      @page.update_attribute(:cache_expire_minutes, 30)
-      @page.cache_expire_time = 1.day.from_now
-      @page.save
-      @page.cache_expire_minutes.should == 0
-    end
-    it "should set cache_expire_time to nil when cache_expire_minutes is updated" do
-      @page.update_attribute(:cache_expire_time, 1.day.from_now)
-      @page.cache_expire_minutes = 30
-      @page.save
-      @page.cache_expire_time.should be_nil
-    end
-    it "should not cache after setting cache_expire_minutes to -1" do
-      @page.update_attribute(:cache_expire_minutes, -1)
-      @page.cache?.should == false
-    end
-
-    describe "- updating a page which has caching turned off" do
-      before :each do
-        @page.update_attribute(:cache_expire_minutes, -1)
-        @page.cache?.should == false
-      end
-      it "should cache after updating cache_expire_minutes" do
-        @page.cache_expire_minutes = 30
-        @page.save
-        @page.cache?.should == true
-      end
-      it "should cache after updating cache_expire_time" do
-        @page.cache_expire_time = 1.day.from_now
-        @page.save
-        @page.cache?.should == true
+      page_is_cached(@page).should be_true
+      if USING_RACK_CACHE
+        response.headers['Cache-Control'].should == "max-age=#{@default}, public"
+      else
+        @cache.expire_time.should == @default
+        @cache.response_cached?(@page.url).should be_true
       end
     end
   end
 
-  describe "- setting page specific caching with number of minutes" do
-    before :each do
-      @cache.response_cached?(@page.url).should be_false
-      @expire_mins = 30
-      @page.cache_expire_minutes = @expire_mins
-      @page.save
-      navigate_to "#{@page.slug}"
-    end
-    it "should have cached the page" do
-      @cache.response_cached?(@page.url).should be_true
-    end
-    it "should set the cache_timeout after updating cache_expire_minutes" do
-      response.should_receive(:cache_timeout=){|timeout| timeout.should be_close(@expire_mins.minutes.from_now, 1) }
-      @page.process(request, response)
-    end
-    it "should cache page for the specified time" do
-      YAML.load_file(@cache_file)['expires'].should be_close(@expire_mins.minutes.from_now, 1)
-    end
-    it "should re-cache the page if the expire_time is past" do
-      yf = YAML.load_file(@cache_file)
-      yf['expires'] = Time.now.yesterday
-      FileUtils.rm(@cache_file)
-      File.open(@cache_file, 'w') { |f| f.write(yf.to_yaml) }
-      YAML.load_file(@cache_file)['expires'].should be_close(Time.now.yesterday, 60)
-      navigate_to "#{@page.slug}"
-      YAML.load_file(@cache_file)['expires'].should be_close(@expire_mins.minutes.from_now, 60)
+  %w(minutes time).each do |att|
+    describe "- page with specific caching option by #{att}" do
+    
+      before(:each) do
+        page_is_cached(@page).should be_false
+        @expire_mins = 180
+        @expire_time = @expire_mins.minutes.from_now
+        if att == "minutes"
+          @page.cache_expire_minutes = @expire_mins
+        elsif att == "time"
+          @page.cache_expire_time = @expire_time
+        end
+        @page.save!
+        get "#{@page.slug}"
+        page_is_cached(@page).should be_true
+      end
+
+      it "should cache page for the specified #{att}" do
+        cache_expires.should be_close(@expire_mins.minutes.from_now, 30)
+      end
+      it "should re-cache the page if the expire_time is past" do
+        if USING_RACK_CACHE
+          unless `ls #{@cache_dir}/meta`.blank?
+            file_name = `ls -1 #{@cache_dir}/meta/*/*`.strip
+            file_contents = `cat #{file_name}`
+            year = Time.now.strftime('%Y')
+            file_contents = file_contents.sub(" #{year} ", " #{(year.to_i-1).to_s} ")
+            FileUtils.rm(file_name)
+            File.open(file_name, 'w') { |f| f.write(file_contents) }
+          end
+        else
+          file_contents = YAML.load_file(@cache_file)
+          file_contents['expires'] = 1.year.ago
+          FileUtils.rm(@cache_file)
+          File.open(@cache_file, 'w') { |f| f.write(file_contents.to_yaml) }
+        end
+        `sleep 1`
+        2.times { get "#{@page.slug}" }
+        page_is_cached(@page).should be_true
+        response.headers['Age'].should == "0" if USING_RACK_CACHE
+        cache_expires.should be_close(@expire_mins.minutes.from_now, 30)
+      end
     end
   end
-  describe "- setting page specific caching with specific time of day" do
-    before :each do
-      @cache.response_cached?(@page.url).should be_false
-      @expire_time = 3.hours.from_now
-      @page.cache_expire_time = @expire_time
-      @page.save
-      navigate_to "#{@page.slug}"
-    end
-    it "should have cached the page" do
-      @cache.response_cached?(@page.url).should be_true
-    end
-    it "should set the cache_timeout after updating cache_expire_time" do
-      response.should_receive(:cache_timeout=){|timeout| timeout.should be_close(@expire_time, 60) }
-      @page.process(request, response)
-    end
-    it "should cache page for the specified time" do
-      YAML.load_file(@cache_file)['expires'].should be_close(@expire_time, 60)
-    end
-    it "should re-cache the page if the expire_time is past" do
-      yf = YAML.load_file(@cache_file)
-      yf['expires'] = Time.now.yesterday
-      FileUtils.rm(@cache_file)
-      File.open(@cache_file, 'w') {|f| f.write(yf.to_yaml) }
-      YAML.load_file(@cache_file)['expires'].should be_close(Time.now.yesterday, 60)
-      navigate_to "#{@page.slug}"
-      YAML.load_file(@cache_file)['expires'].should be_close(@expire_time, 60)
-    end
+
+  after(:each) do
+    @cache.clear
   end
 
 end
