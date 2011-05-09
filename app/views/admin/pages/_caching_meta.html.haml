@@ -1,7 +1,6 @@
 - if current_user.admin?
   %tr
-    %th.label{:style => "vertical-align:middle"}
-      Page Caching
+    %th.label{:style => "vertical-align:middle"} Page Caching
     %td.field{:style => "text-align: left"}
       %table{:style => "vertical-align:top;"}
         %row
@@ -9,21 +8,21 @@
             %label Current Setting:
             %br
             = @page.cache_setting if Page.exists? @page
-          %td{:style => "text-align: left"}
-            %label Override: Cache this page for
+          %td{:style => "padding-left:40px"}
+            %label Override:
+          %td{:style => "padding-left:10px"}
+            %label Cache this page for
             = text_field :page, :cache_expire_minutes, {:maxlength => 4}
-            - mins = @page.cache_expire_minutes != 1 ? "minutes" : "minute"
-            = mins
+            = "minutes"
             %br
             %span.desc= "( '0' = Default of #{Page.default_caching},  '-1' = No Caching )"
-            %td{:style => "text-align: left"} &mdash; or &mdash;
-            %td{:style => "text-align: right"}
-              %label
-                Expire cache each day at
-                = text_field :page, :cache_expire_time, {:maxlength => 5}
-                (HH:MM)
-                %br
-                %span.desc= "(Clear expire time to reset default of #{Page.default_caching})"
+          %td &mdash; or &mdash;
+          %td
+            %label Expire cache each day at
+            = text_field_tag 'page[cache_expire_time]', @page.cache_expire_time ? @page.cache_expire_time.in_time_zone.strftime("%H:%M") : "", {:size => 5, :maxlength => 5}
+            = "(HH:MM)"
+            %br
+            %span.desc= "(Clear expire time to reset default of #{Page.default_caching})"
   - content_for :page_css do
     :sass
       .desc

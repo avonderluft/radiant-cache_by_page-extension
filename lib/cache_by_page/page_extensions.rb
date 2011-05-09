@@ -21,10 +21,27 @@ module CacheByPage::PageExtensions
       def cache_override?
         self.cache_expire_minutes.to_i > 0 || self.cache_expire_time != nil
       end
+      def cache_duration
+        @page = Page.find(self.id)
+        case true
+        when @page.cache_expire_minutes == 0 && @page.cache_expire_time == nil
+          if SiteController.respond_to?('cache_timeout')
+            SiteController.cache_timeout
+          else
+            ResponseCache.defaults[:expire_time]
+          end
+        when @page.cache_expire_minutes == -1: nil
+        when @page.cache_expire_minutes >= 1: @page.cache_expire_minutes.minutes
+        when @page.cache_expire_time != nil && @page.cache_expire_time.is_a?(Time)
+          next_expire_time = @page.cache_expire_time < Time.now ? @page.cache_expire_time.tomorrow : @page.cache_expire_time
+          (next_expire_time - Time.now).round
+        else nil
+        end
+      end
       def cache_setting
         @page = Page.find(self.id)
         case true
-        when @page.cache_expire_minutes == 0 && @page.cache_expire_time == nil: "Default"
+        when @page.cache_expire_minutes == 0 && @page.cache_expire_time == nil: Page.default_caching
         when @page.cache_expire_minutes == -1: "No Caching"
         when @page.cache_expire_minutes == 1: "1 minute"
         when @page.cache_expire_minutes > 1: "#{@page.cache_expire_minutes} minutes"
