@@ -1,0 +1,17 @@
+h2. Usage
+
+This is available to admin users only.
+In Page Edit pane, open the drawer to set caching options specific to that page.
+Instructions there should be sufficient:
+* '0' for default caching
+* '-1' for no caching
+* 'n' for _n_ minutes caching
+* or, on the right, set a 24 hr HH:MM time for the cache to expire for this page daily
+
+h3. Notes
+
+* The cache_expire_time is being set with a text field with no validation for a few reasons:
+** The time_select in rails has issues when the :include_blank => true option is set, viz. it consistently throws multi-parameter assignment errors.
+** At validation time the text entered has already been parsed into a Time object, therefore attempting validates_format_of with a regex for hh:mm is pointless.
+** Consequently, if you enter "www" it will parse the input into Time 00:00 (midnight).  To avoid possible confusion, I have added Current Setting in the meta partial.
+* Expire time displays as hh:mm, due to fact that it is a Time object being handled by ActiveRecord, it is entered as hh:mm, with seconds defaulting to 00.
