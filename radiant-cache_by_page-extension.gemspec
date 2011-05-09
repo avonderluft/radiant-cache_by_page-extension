@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
     "lib/cache_by_page/page_extensions.rb",
     "lib/cache_by_page/site_controller_extensions.rb",
     "lib/tasks/cache_by_page_extension_tasks.rake",
+    "radiant-cache_by_page-extension.gemspec",
     "spec/controllers/admin_pages_controller_spec.rb",
     "spec/controllers/site_controller_extensions_spec.rb",
     "spec/integration/page_caching_spec.rb",
@@ -37,7 +38,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = %q{https://github.com/avonderluft/radiant-cache_by_page-extension}
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.6.2}
+  s.rubygems_version = %q{1.5.2}
   s.summary = %q{Cache By Page Extension for Radiant CMS}
   s.test_files = [
     "spec/controllers/admin_pages_controller_spec.rb",

@@ -21,9 +21,39 @@ From your RADIANT_ROOT:
 * <pre>$ script/extension install cache_by_page</pre>
 * Restart your radiant app, and you should be good to go.
 
+h2. Installation
+
+h3. From the Radiant Extension Registry
+
+# From your RAILS_ROOT run:
+<pre>script/extension install cache_by_page</pre>
+# Restart your app
+NOTE: In some earlier versions of Radiant, the migrations may not run, and the assets may not be copied and you may therefore need to run:
+<pre>rake radiant:extensions:cache_by_page:migrate</pre>
+
+h3. From Github
+
+# From your RAILS_ROOT run:
+<pre>cd vendor/extensions
+git clone git://github.com/avonderluft/radiant-cache_by_page-extension.git ./cache_by_page
+cd ../../
+rake radiant:extensions:cache_by_page:migrate
+</pre>
+# Restart your app
+
+h3. Using the gem
+
+# Install the gem
+<pre>gem install radiant-cache_by_page-extension</pre>
+# Update your Radiant config:  add to environment.rb with other gem.configs
+<pre>config.gem 'radiant-cache_by_page-extension', :lib => false</pre>
+# Run database migrations
+<pre>rake db:migrate:extensions</pre>
+# Restart your app
+
 h3. Usage
 
-See Admin help file
+See Admin help doc
 
 h3. Acknowledgments
 

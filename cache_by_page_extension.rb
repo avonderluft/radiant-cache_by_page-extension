@@ -3,7 +3,7 @@
 
 class CacheByPageExtension < Radiant::Extension
   version "#{File.read(File.expand_path(File.dirname(__FILE__)) + '/VERSION')}"
-  description "Enables per page option of setting cache expire time, or turning off caching for a single page"
+  description "Enables per page admin option of setting caching to a non-default value, or turning it off altogether"
   url "https://github.com/avonderluft/radiant-cache_by_page-extension"
 
   def activate
