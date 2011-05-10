@@ -5,6 +5,7 @@ describe Page, "with page-specific caching", :type => :integration do
   USING_RACK_CACHE = SiteController.respond_to?('cache_timeout')
 
   before :all do
+    FileUtils.chdir RAILS_ROOT
     @cache_dir = "#{RAILS_ROOT}/tmp/cache"
     @cache_file = USING_RACK_CACHE ? "#{@cache_dir}/meta/*/*" : "#{@cache_dir}/_site-root.yml"
   end
@@ -62,8 +63,9 @@ describe Page, "with page-specific caching", :type => :integration do
 
   %w(minutes time).each do |att|
     describe "- page with specific caching option by #{att}" do
-    
+
       before(:each) do
+        @cache.clear
         page_is_cached(@page).should be_false
         @expire_mins = 180
         @expire_time = @expire_mins.minutes.from_now
