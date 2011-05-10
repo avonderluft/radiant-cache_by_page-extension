@@ -48,7 +48,7 @@ describe Page, "with page-specific caching", :type => :integration do
 
   describe "- intial fetch of page before updates" do
     it "should render a page with default caching" do
-      get "#{@page.slug}"
+      navigate_to "#{@page.slug}"
       response.should be_success
       response.cache_timeout.should be_nil
       page_is_cached(@page).should be_true
@@ -75,7 +75,7 @@ describe Page, "with page-specific caching", :type => :integration do
           @page.cache_expire_time = @expire_time
         end
         @page.save!
-        get "#{@page.slug}"
+        navigate_to "#{@page.slug}"
         page_is_cached(@page).should be_true
       end
 
