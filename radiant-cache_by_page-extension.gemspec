@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-cache_by_page-extension}
-  s.version = "1.0.0"
+  s.version = "1.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andrew vonderLuft"]
-  s.date = %q{2011-05-09}
+  s.date = %q{2011-06-23}
   s.description = %q{Enables per page admin option of setting caching to a non-default value, or turning it off altogether.}
   s.email = %q{avonderluft@avlux.net}
   s.extra_rdoc_files = [
@@ -38,7 +38,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = %q{https://github.com/avonderluft/radiant-cache_by_page-extension}
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.5.2}
+  s.rubygems_version = %q{1.6.2}
   s.summary = %q{Cache By Page Extension for Radiant CMS}
   s.test_files = [
     "spec/controllers/admin_pages_controller_spec.rb",
