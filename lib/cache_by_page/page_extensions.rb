@@ -30,9 +30,9 @@ module CacheByPage::PageExtensions
           else
             ResponseCache.defaults[:expire_time]
           end
-        when @page.cache_expire_minutes == -1: nil
-        when @page.cache_expire_minutes >= 1: @page.cache_expire_minutes.minutes
-        when @page.cache_expire_time != nil && @page.cache_expire_time.is_a?(Time)
+        when @page.cache_expire_minutes == -1 then nil
+        when @page.cache_expire_minutes >= 1 then @page.cache_expire_minutes.minutes
+        when @page.cache_expire_time != nil && @page.cache_expire_time.is_a?(Time) then
           next_expire_time = @page.cache_expire_time < Time.now ? @page.cache_expire_time.tomorrow : @page.cache_expire_time
           (next_expire_time - Time.now).round
         else nil
@@ -41,11 +41,11 @@ module CacheByPage::PageExtensions
       def cache_setting
         @page = Page.find(self.id)
         case true
-        when @page.cache_expire_minutes == 0 && @page.cache_expire_time == nil: Page.default_caching
-        when @page.cache_expire_minutes == -1: "No Caching"
-        when @page.cache_expire_minutes == 1: "1 minute"
-        when @page.cache_expire_minutes > 1: "#{@page.cache_expire_minutes} minutes"
-        when @page.cache_expire_time != nil && @page.cache_expire_time.is_a?(Time)
+        when @page.cache_expire_minutes == 0 && @page.cache_expire_time == nil then Page.default_caching
+        when @page.cache_expire_minutes == -1 then "No Caching"
+        when @page.cache_expire_minutes == 1 then "1 minute"
+        when @page.cache_expire_minutes > 1 then "#{@page.cache_expire_minutes} minutes"
+        when @page.cache_expire_time != nil && @page.cache_expire_time.is_a?(Time) then
           "Daily at #{@page.cache_expire_time.strftime("%H")}:#{@page.cache_expire_time.strftime("%M")}"
         else "Not set"
         end
@@ -70,14 +70,10 @@ module CacheByPage::PageExtensions
     def default_caching
       seconds = SiteController.respond_to?('cache_timeout') ? SiteController.cache_timeout : ResponseCache.defaults[:expire_time] 
       cache_expire_time = case true
-        when seconds >= 86400
-          "#{seconds/86400} days"
-        when seconds >= 3600
-          "#{seconds/3600} hours"
-        when seconds >= 120
-          "#{seconds/60} minutes"
-        else
-          "#{seconds} seconds"
+        when seconds >= 86400 then "#{seconds/86400} days"
+        when seconds >= 3600 then "#{seconds/3600} hours"
+        when seconds >= 120 then "#{seconds/60} minutes"
+        else "#{seconds} seconds"
       end
       cache_expire_time = cache_expire_time.chop if cache_expire_time[0,1] == "1"
       cache_expire_time
