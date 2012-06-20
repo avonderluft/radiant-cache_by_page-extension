@@ -4,14 +4,14 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{radiant-cache_by_page-extension}
-  s.version = "1.0.1"
+  s.name = "radiant-cache_by_page-extension"
+  s.version = "1.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andrew vonderLuft"]
-  s.date = %q{2011-06-23}
-  s.description = %q{Enables per page admin option of setting caching to a non-default value, or turning it off altogether.}
-  s.email = %q{avonderluft@avlux.net}
+  s.date = "2012-02-06"
+  s.description = "Enables per page admin option of setting caching to a non-default value, or turning it off altogether."
+  s.email = "avonderluft@avlux.net"
   s.extra_rdoc_files = [
     "README.textile"
   ]
@@ -36,10 +36,10 @@ Gem::Specification.new do |s|
     "spec/spec.opts",
     "spec/spec_helper.rb"
   ]
-  s.homepage = %q{https://github.com/avonderluft/radiant-cache_by_page-extension}
+  s.homepage = "https://github.com/avonderluft/radiant-cache_by_page-extension"
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.6.2}
-  s.summary = %q{Cache By Page Extension for Radiant CMS}
+  s.rubygems_version = "1.8.10"
+  s.summary = "Cache By Page Extension for Radiant CMS"
   s.test_files = [
     "spec/controllers/admin_pages_controller_spec.rb",
     "spec/controllers/site_controller_extensions_spec.rb",
