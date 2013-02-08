@@ -10,7 +10,6 @@ unless defined? RADIANT_ROOT
   end
 end
 require "#{RADIANT_ROOT}/spec/spec_helper"
-require 'spec/integration'
 
 # if File.directory?(File.dirname(__FILE__) + "/scenarios")
 #   Scenario.load_paths.unshift File.dirname(__FILE__) + "/scenarios"

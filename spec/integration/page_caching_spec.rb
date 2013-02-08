@@ -1,4 +1,9 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require 'spec_helper'
+
+def navigate_to(path, method = :get, params = nil, options = {})
+  self.send method, path, params || {}, options
+  follow_redirect! while response.redirect?
+end
 
 describe Page, "with page-specific caching", :type => :integration do
   dataset :pages

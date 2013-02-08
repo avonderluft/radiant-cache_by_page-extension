@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require 'spec_helper'
 
 Admin::PagesController.module_eval { def rescue_action(e); raise e; end }
 
