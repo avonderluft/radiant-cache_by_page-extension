@@ -71,7 +71,7 @@ namespace :spec do
     t.spec_files = FileList['spec/**/*_spec.rb']
   end
 
-  [:models, :controllers, :views, :helpers].each do |sub|
+  [:models, :controllers, :views, :helpers, :integration].each do |sub|
     desc "Run the specs under spec/#{sub}"
     Spec::Rake::SpecTask.new(sub) do |t|
       t.spec_opts = ['--options', "\"#{extension_root}/spec/spec.opts\""]
@@ -115,7 +115,7 @@ namespace :spec do
   end
 end
 
-desc 'Generate documentation for the page_options extension.'
+desc 'Generate documentation for the cache_by_page extension.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title    = 'PageOptionsExtension'
@@ -125,7 +125,7 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
 end
 
 # For extensions that are in transition
-desc 'Test the page_options extension.'
+desc 'Test the cache_by_page extension.'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
   t.pattern = 'test/**/*_test.rb'

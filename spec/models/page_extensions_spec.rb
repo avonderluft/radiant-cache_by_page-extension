@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require 'spec_helper'
 
 describe "CacheByPage::PageExtensions" do
   dataset :pages
@@ -66,6 +66,9 @@ describe "CacheByPage::PageExtensions" do
       describe "- updating a page which has caching turned off" do
         before :each do
           @page.update_attribute(:cache_expire_minutes, -1)
+          @page.save
+        end
+        it "should not cache" do
           @page.cache?.should == false
           @page.cache_duration.should be_nil
           @page.cache_setting.should == "No Caching"

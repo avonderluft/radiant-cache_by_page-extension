@@ -1,13 +1,9 @@
 require 'spec_helper'
 require 'site_controller'
+
 SiteController.module_eval { def rescue_action(e); raise e; end }
 
 describe SiteController, "(Extended) - cache by page changes" do
-  dataset :users_and_pages
-  
-  before :each do
-    @page = pages(:home)
-  end
 
   it "should include the extension module" do
     SiteController.included_modules.should include(CacheByPage::SiteControllerExtensions)
